@@ -20,15 +20,38 @@ class Users(Resource):
 
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('locationId', required=True, type=int,location='args')
+        parser.add_argument('userId', required=True, type=int,location='args')
         parser.add_argument('name', required=True, type=str,location='args')
         parser.add_argument('city', required=True, type=str,location='args')
         args = parser.parse_args()
-        return { 
-            'loc': args['locationId'],
-            'name': args['name'],
-            'city': args['city']
-        },200
+        
+        data = pd.read_csv(users_path)
+        if args['userId'] in data['userId']:
+            return{
+                'message': f"{args['userId']}already exists"
+            },409
+        else:
+            data = data.append({
+                'userId':str(args['userId']),
+                'name':args['name'],
+                'city':args['city'],
+                'locations':str([]),
+            },ignore_index=True)
+            data.to_csv(users_path,index=False)
+            return {'data':data.to_dict()},200
+
+    def delete(self):
+        parser =reqparse.RequestParser()
+        parser.add_argument('userId',required=True,type=int,location='args')
+        args = parser.parse_args()
+        data = pd.read_csv(users_path)
+        if args['userId'] in data['userId']:
+            data = data[data['userId'] != str(args['userId'])]
+            data.to_csv(users_path,index=False)
+            return {'data':data.to_dict()},200
+        else:
+            return {'message':f"{args['userId']} does not exist"},404
+
 
 class Locations(Resource):
     pass

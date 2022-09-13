@@ -96,3 +96,11 @@ To get the location of the eifel tower
         data=json.dumps(PAYLOAD)
     )
     res.json()
+
+
+## Following tutorial series
+Video 1: all code logged in test_evb.ipynb
+Video 2: All code logged in api.py
+
+* very informative, for read write functions through a flask API
+
